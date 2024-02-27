@@ -39,6 +39,7 @@ Change the usernames and passwords, timezone as you please. You can add the rout
 Don't forgot to change the numberofHosts variable.
 ```bash
 nano .env
+
 INFLUXDB_USERNAME=admin
 INFLUXDB_PASSWORD=admin123
 INFLUXDB_ORG = yourOrganization
