@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  influxdb:
+    image: influxdb:2.7.3-alpine
+    restart: always
+    ports:
+      - '8086:8086'
+    volumes:
+      - ./influxdb/data/:/var/lib/influxdb
+      - ./influxdb/config/:/etc/influxdb
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_TOKEN=${INFLUXDB_TOKEN}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+      - TZ=${timezone}
+      
+  grafana:
+    image: grafana/grafana:10.2.0
+    user: '${current_uid}'
+    restart: always
+    ports:
+      - '8080:${GRAFANA_PORT}'
+    volumes:
+      - ./grafana/data/:/var/lib/grafana/
+      - ./grafana/config/:/etc/grafana/
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - influxdb
+    environment:
+      - TZ=${timezone}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+  python:
+    build: ./python/.
+    restart: always
+    depends_on:
+      - influxdb
+    env_file:
+      - .env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: ${numberofHosts}
+
