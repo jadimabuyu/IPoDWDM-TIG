@@ -35,6 +35,34 @@ git clone https://github.com/jadimabuyu/IPoDWDM-TIG/
 ```
 
 # Edit the .env file
+Change the usernames and passwords, timezone as you please. You can add the routers and their credentials by editing the hosts variable.
+Don't forgot to change the numberofHosts variable.
 ```bash
-git clone https://github.com/jadimabuyu/IPoDWDM-TIG/
+nano .env
+INFLUXDB_USERNAME=admin
+INFLUXDB_PASSWORD=admin123
+INFLUXDB_ORG = yourOrganization
+INFLUXDB_BUCKET=yourBucket
+INFLUXDB_TOKEN=Cc_ioJXCVPyvQgabo9lVQqPKfD85bI-EQO81cEUD9XT5StYbsnTvnryF5QCemXXpTdiIrJoJXbprLiQcUbbDng==
+
+GRAFANA_USERNAME=admin
+GRAFANA_PASSWORD=admin123
+GRAFANA_PORT=8080
+
+current_uid=0
+timezone=America/Los_Angeles
+
+numberofHosts=2
+hosts='[
+{"host":"rtme-acx-48l-10.englab.juniper.net","user":"root","passwd":"PASSWORD"},
+{"host":"rtme-mx304-05.englab.juniper.net","user":"root","passwd":"PASSWORD"},
+]'
+poolInterval=15
 ```
+# Use docker compose to start the containers
+```bash
+docker compose up -d
+```
+
+# Finished
+The Grafana Dashboard should be in http://yourIPAddress:yourGrafanaPortNumber
