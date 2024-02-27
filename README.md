@@ -1,6 +1,4 @@
 Installation
-========================
-# Installing IPoDWDM-TIG
 
 # Ubuntu 
 
