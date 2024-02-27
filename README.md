@@ -1,6 +1,4 @@
-Installation
-
-# Ubuntu 
+# Ubuntu Installation
 
 Install Docker Engine as per Docker's Instructions
 https://docs.docker.com/engine/install/ubuntu/
