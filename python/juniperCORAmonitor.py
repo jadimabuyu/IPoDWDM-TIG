@@ -62,14 +62,29 @@ def junosGetInterfaceInfo(interface):
     media_code_desc=""
     try:
         operStatus=intInfo.find(f'physical-interface/oper-status').text
+        speed = ""
+        speed=intInfo.find(f'physical-interface/speed').text
+        media_code_desc=intInfo.find(f'physical-interface/optics-properties/media-code-desc').text
+        if "100" in speed:
+           speed = "8 x 100GE"
+        elif "400" in speed and not("400" in media_code_desc):
+           speed = "2 x 400GE"
+        elif "400" in speed and ("400" in media_code_desc):
+           speed = "1 x 400 GE"
+        elif "200" in speed:
+           speed = "4 x 200 GE"
+        elif "800" in speed:
+           speed = "1 x 800GE"
+        else:
+           pass
+        print(speed)
         freq=intInfo.find(f'physical-interface/optics-properties/frequency').text
         ibps=intInfo.find(f'physical-interface/traffic-statistics/input-bps').text
         obps=intInfo.find(f'physical-interface/traffic-statistics/output-bps').text
         uncorrectedWords=intInfo.find(f'physical-interface/optic-fec-statistics/fec-uncorrected-words').text
-        media_code_desc=intInfo.find(f'physical-interface/optics-properties/media-code-desc').text
     except:
         pass
-    return {"operStatus":operStatus,"waveorfreq":freq,"ibps":ibps,"obps":obps,"uncorrectedWords":uncorrectedWords,"media-code-desc":media_code_desc}
+    return {"operStatus":operStatus,"waveorfreq":freq,"ibps":ibps,"obps":obps,"uncorrectedWords":uncorrectedWords,"media-code-desc":media_code_desc,"speed":speed}
 
 def junosGetModuleInfo(interface):
 	fpc,pic,port=portIdentifier(interface)	
@@ -78,8 +93,8 @@ def junosGetModuleInfo(interface):
 	modulePN=picDetail.find(f'fpc/pic-detail/port-information/port/[port-number="{port}"]/sfp-vendor-pno').text
 	chassisHardware=junosDev.rpc.get_chassis_inventory(normalize=True,)
 	moduleSN=chassisHardware.find(f'chassis/chassis-module/[name="FPC {fpc}"]/chassis-sub-module/[name="PIC {pic}"]/chassis-sub-sub-module/[name="Xcvr {port}"]/serial-number').text
-					
-	return {"moduleVendor":moduleVendor,"modulePN":modulePN,"moduleSN":moduleSN} 	
+	description=chassisHardware.find(f'chassis/chassis-module/[name="FPC {fpc}"]/chassis-sub-module/[name="PIC {pic}"]/chassis-sub-sub-module/[name="Xcvr {port}"]/description').text
+	return {"moduleVendor":moduleVendor,"modulePN":modulePN,"moduleSN":moduleSN,"description":description}
 
 
 def getZRInt():
