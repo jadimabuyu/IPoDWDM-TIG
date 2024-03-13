@@ -32,7 +32,7 @@ git clone https://github.com/jadimabuyu/IPoDWDM-TIG/
 
 ## Edit the .env file
 Change the usernames and passwords, timezone as you please. You can add the routers and their credentials by editing the hosts variable.
-Don't forgot to change the numberofHosts variable.
+Don't forget to change the numberofHosts variable.
 ```bash
 nano .env
 ```
@@ -53,11 +53,24 @@ timezone=America/Los_Angeles
 
 numberofHosts=2
 hosts='[
-{"host":"rtme-acx-48l-10.englab.juniper.net","user":"root","passwd":"PASSWORD"},
-{"host":"rtme-mx304-05.englab.juniper.net","user":"root","passwd":"PASSWORD"},
+{"host":"rtme-acx-48l-10.englab.juniper.net","user":"netconf_user","passwd":"PASSWORD"},
+{"host":"rtme-mx304-05.englab.juniper.net","user":"netconf_user","passwd":"PASSWORD"},
 ]'
 poolInterval=15
 ```
+
+## Configure the router
+```bash
+set system login user netconf_user class super-user
+set system services netconf ssh
+
+# If you have the encrypted hash of the password desired
+set system login user netconf_user authentication encrypted-password “”
+# If you need to type the password in plain text
+set system login user netconf_user authentication plain-text-password
+```
+
+
 ## Use docker compose to start the containers
 ```bash
 docker compose up -d
