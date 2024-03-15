@@ -24,6 +24,10 @@ sudo apt-get update
 ```bash
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+## Login into Docker
+```bash
+docker login --username <your-username>
+```
 
 ## Clone the Repository
 ```bash
