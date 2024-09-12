@@ -59,6 +59,7 @@ def junosGetPM(interface):
 		
 def junosGetInterfaceInfo(interface):
     intInfo=junosDev.rpc.get_interface_information(normalize=True,interface_name=interface)
+    opticsApps=junosDev.rpc.get_interface_optics_applications_diagnostics(normalize=True,interface_name=interface)
     media_code_desc=""
     try:
         operStatus=intInfo.find(f'physical-interface/oper-status').text
