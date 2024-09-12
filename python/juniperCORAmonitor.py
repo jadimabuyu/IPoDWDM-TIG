@@ -63,21 +63,22 @@ def junosGetInterfaceInfo(interface):
     try:
         operStatus=intInfo.find(f'physical-interface/oper-status').text
         speed = ""
-        speed=intInfo.find(f'physical-interface/speed').text
+        try:
+            speed=opticsApps.find(f'physical-interface/optics-applications/current-speed').text + 'E'
+        except:
+            speed=intInfo.find(f'physical-interface/speed').text
+
         media_code_desc=intInfo.find(f'physical-interface/optics-properties/media-code-desc').text
-        if "100" in speed:
-           speed = "8 x 100GE"
-        elif "400" in speed and not("400" in media_code_desc):
-           speed = "2 x 400GE"
-        elif "400" in speed and ("400" in media_code_desc):
-           speed = "1 x 400 GE"
-        elif "200" in speed:
-           speed = "4 x 200 GE"
-        elif "800" in speed:
-           speed = "1 x 800GE"
-        else:
-           pass
-        print(speed)
+        if 'Reserved' in media_code_desc or 'Custom' in media_code_desc:
+            logging.info("Detected")
+            for x in opticsApps.findall(f'physical-interface/optics-applications/optics-application/media-interfaces-code'):
+                logging.info(x.text)
+                if '108' in x.text:
+                    media_code_desc = '800ZR-A, 150 GHz DWDM'
+                elif '109' in x.text:
+                    media_code_desc = '800ZR-B, 150 GHz DWDM'
+                elif '110' in x.text:
+                    media_code_desc = '800ZR-C, 150 GHz DWDM'
         freq=intInfo.find(f'physical-interface/optics-properties/frequency').text
         ibps=intInfo.find(f'physical-interface/traffic-statistics/input-bps').text
         obps=intInfo.find(f'physical-interface/traffic-statistics/output-bps').text
@@ -115,6 +116,8 @@ def main():
             moduleInfo[x]=junosGetModuleInfo(x)
             interfaceInfo[x]=junosGetInterfaceInfo(x)
             for (j,k) in pm[x].items():
+                 if k == ".":
+                     continue
                  sequence.append(f"VDM,interface={x},host={host['host']} {str(re.sub(r' ', '_',j))}={float(k)}")
             for (j,k) in moduleInfo[x].items():
                 sequence.append(f'VDM,interface={x},host={host["host"]} {j}="{str(k)}"')
