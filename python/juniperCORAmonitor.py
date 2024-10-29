@@ -4,7 +4,7 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from datetime import datetime
 from threading import Timer
-import re, ast, time, os, docker, time
+import re, ast, time, os, docker, time, logging, logging.config
 
 dockerAPI = docker.DockerClient(base_url='unix://var/run/docker.sock')
 instanceIndex=int(dockerAPI.containers.list(filters={'id':os.environ["HOSTNAME"]})[0].labels['com.docker.compose.container-number'])-1
@@ -80,6 +80,12 @@ def junosGetInterfaceInfo(interface):
                     media_code_desc = '800ZR-B, 150 GHz DWDM'
                 elif '110' in x.text:
                     media_code_desc = '800ZR-C, 150 GHz DWDM'
+                elif '211' in x.text:                                                                                                                                   
+			media_code_desc = 'OpenZR+ ZR800-OFEC-16QAM'                                                                                                    
+		elif '212' in x.text:                                                                                                                                   
+			media_code_desc = 'OpenZR+ ZR600-OFEC-8QAM'                                                                                                     
+		elif '213' in x.text:                                                                                                                                   
+			media_code_desc = 'OpenZR+ ZR400-OFEC-QPSK' 
         freq=intInfo.find(f'physical-interface/optics-properties/frequency').text
         ibps=intInfo.find(f'physical-interface/traffic-statistics/input-bps').text
         obps=intInfo.find(f'physical-interface/traffic-statistics/output-bps').text
@@ -131,6 +137,19 @@ def main():
             print(x)
 
 #rt = RepeatedTimer(int(os.environ["poolInterval"]), main)
+
+logging.basicConfig(
+level=logging.INFO,
+format="%(asctime)s [%(levelname)s] %(message)s",
+handlers=[
+    logging.StreamHandler()
+]
+)
+logging.config.dictConfig({
+'version': 1,
+'disable_existing_loggers': True,
+})
+
 while 1:
     main()
     time.sleep(int(os.environ["poolInterval"]))
