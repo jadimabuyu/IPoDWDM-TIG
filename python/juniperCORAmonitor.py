@@ -70,22 +70,6 @@ def junosGetInterfaceInfo(interface):
             speed=intInfo.find(f'physical-interface/speed').text
 
         media_code_desc=intInfo.find(f'physical-interface/optics-properties/media-code-desc').text
-        if 'Reserved' in media_code_desc or 'Custom' in media_code_desc:
-            logging.info("Detected")
-            for x in opticsApps.findall(f'physical-interface/optics-applications/optics-application/media-interfaces-code'):
-                logging.info(x.text)
-                if '108' in x.text:
-                    media_code_desc = '800ZR-A, 150 GHz DWDM'
-                elif '109' in x.text:
-                    media_code_desc = '800ZR-B, 150 GHz DWDM'
-                elif '110' in x.text:
-                    media_code_desc = '800ZR-C, 150 GHz DWDM'
-                elif '211' in x.text:                                                                                                                                   
-			media_code_desc = 'OpenZR+ ZR800-OFEC-16QAM'                                                                                                    
-		elif '212' in x.text:                                                                                                                                   
-			media_code_desc = 'OpenZR+ ZR600-OFEC-8QAM'                                                                                                     
-		elif '213' in x.text:                                                                                                                                   
-			media_code_desc = 'OpenZR+ ZR400-OFEC-QPSK' 
         freq=intInfo.find(f'physical-interface/optics-properties/frequency').text
         ibps=intInfo.find(f'physical-interface/traffic-statistics/input-bps').text
         obps=intInfo.find(f'physical-interface/traffic-statistics/output-bps').text
